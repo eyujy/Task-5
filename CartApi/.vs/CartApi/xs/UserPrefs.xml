@@ -4,9 +4,9 @@
     <Files>
       <File FileName="Models/Cart.cs" Line="10" Column="33" />
       <File FileName="Models/CartContext.cs" />
-      <File FileName="Startup.cs" Line="41" Column="47" />
-      <File FileName="Controllers/CartController.cs" Line="102" Column="1" />
-      <File FileName="Services/CartService.cs" Line="28" Column="6" />
+      <File FileName="Startup.cs" />
+      <File FileName="Controllers/CartController.cs" />
+      <File FileName="Services/CartService.cs" Line="114" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -15,9 +15,8 @@
             <Node name="CartApi" expanded="True">
               <Node name="Controllers" expanded="True" />
               <Node name="Models" expanded="True" />
-              <Node name="Services" expanded="True">
-                <Node name="CartService.cs" selected="True" />
-              </Node>
+              <Node name="Services" expanded="True" />
+              <Node name="Startup.cs" selected="True" />
             </Node>
           </Node>
         </State>

@@ -84,7 +84,7 @@ public class CartService : BackgroundService
         consumer.Unregistered += OnConsumerUnregistered;
         consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
 
-        _channel.BasicConsume("order_processed", true, consumer);
+        _channel.BasicConsume("order_processed", false, consumer);
         return Task.CompletedTask;
     }
 
@@ -102,12 +102,15 @@ public class CartService : BackgroundService
             var db = scope.ServiceProvider.GetRequiredService<CartContext>();
             
             if(db.Carts.Any(e => e.CartId == cart.CartId)){
+                _logger.LogInformation("cart with id found");
                 Cart cartDB = db.Carts.Find(cart.CartId);
                 cartDB.OrderStatus = cart.OrderStatus;
                 db.Entry(cartDB).State = EntityState.Modified;
+                db.SaveChanges();
+            }else{
+                _logger.LogInformation("cart with cart id not found");
             };
 
-            db.SaveChanges();
         }
 
     }

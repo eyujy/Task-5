@@ -84,7 +84,7 @@ public class OrderService : BackgroundService
         consumer.Unregistered += OnConsumerUnregistered;
         consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
 
-        _channel.BasicConsume("orders", true, consumer);
+        _channel.BasicConsume("orders", false, consumer);
         return Task.CompletedTask;
     }
 
@@ -94,6 +94,7 @@ public class OrderService : BackgroundService
         _logger.LogInformation($"consumer received {content}");
 
         Order order = JsonSerializer.Deserialize<Order>(content);
+        Order order_msg = order;
 
         using (var scope = _scopeFactory.CreateScope())
         {
@@ -113,6 +114,8 @@ public class OrderService : BackgroundService
                 db.SaveChanges();
                 Console.WriteLine("saved to db");
             }
+
+            order_msg = db.Orders.Where(x => x.CartId == order.CartId).SingleOrDefault();
         }
 
         var factory = new ConnectionFactory
@@ -134,7 +137,7 @@ public class OrderService : BackgroundService
                                  arguments: null);
 
             string message = string.Empty;
-            message = JsonSerializer.Serialize(order);
+            message = JsonSerializer.Serialize(order_msg);
             var body = Encoding.UTF8.GetBytes(message);
 
             channel.BasicPublish(exchange: "",
