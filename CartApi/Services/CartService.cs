@@ -9,25 +9,25 @@ using RabbitMQ.Client.Events;
 
 
 using Microsoft.Extensions.Configuration;
-using OrderApi.Models;
+using CartApi.Models;
 using System.Text.Json;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-public class OrderService : BackgroundService
+public class CartService : BackgroundService
 {
     private readonly ILogger _logger;
     private IConnection _connection;
     private IModel _channel;
     private readonly IConfiguration _env;
-    // private readonly OrderContext  _context;
+    // private readonly CartContext  _context;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public OrderService(ILoggerFactory loggerFactory, IConfiguration env, IServiceScopeFactory scopeFactory)
+    public CartService(ILoggerFactory loggerFactory, IConfiguration env, IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
-        this._logger = loggerFactory.CreateLogger<OrderService>();
+        this._logger = loggerFactory.CreateLogger<CartService>();
         // _context = context;
         _env = env;
 
@@ -56,7 +56,7 @@ public class OrderService : BackgroundService
         _channel = _connection.CreateModel();
 
         //_channel.ExchangeDeclare("demo.exchange", ExchangeType.Topic);
-        _channel.QueueDeclare("orders", false, false, false, null);
+        _channel.QueueDeclare("order_processed", true, false, false, null);
 
         // _channel.QueueBind("demo.queue.log", "demo.exchange", "demo.queue.*", null);
         // _channel.BasicQos(0, 1, false);
@@ -84,7 +84,7 @@ public class OrderService : BackgroundService
         consumer.Unregistered += OnConsumerUnregistered;
         consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
 
-        _channel.BasicConsume("orders", true, consumer);
+        _channel.BasicConsume("order_processed", true, consumer);
         return Task.CompletedTask;
     }
 
@@ -93,55 +93,21 @@ public class OrderService : BackgroundService
         // we just print this message   
         _logger.LogInformation($"consumer received {content}");
 
-        Order order = JsonSerializer.Deserialize<Order>(content);
+        Cart cart = JsonSerializer.Deserialize<Cart>(content);
+
+        // string message = string.Empty;
 
         using (var scope = _scopeFactory.CreateScope())
         {
-            var db = scope.ServiceProvider.GetRequiredService<OrderContext>();
-            db.Database.EnsureCreated();
+            var db = scope.ServiceProvider.GetRequiredService<CartContext>();
+            
+            if(db.Carts.Any(e => e.CartId == cart.CartId)){
+                Cart cartDB = db.Carts.Find(cart.CartId);
+                cartDB.OrderStatus = cart.OrderStatus;
+                db.Entry(cartDB).State = EntityState.Modified;
+            };
 
-            if (db.Orders.Any(e => e.CartId == order.CartId))
-            {
-                order.OrderStatus = "Failed"; // due to duplicate cartID
-                Console.WriteLine("Order status failed");
-            }
-            else
-            {
-                order.OrderStatus = "Success";
-                _logger.LogInformation("order success");
-                db.Orders.Add(order);
-                db.SaveChanges();
-                Console.WriteLine("saved to db");
-            }
-        }
-
-        var factory = new ConnectionFactory
-        {
-            HostName = _env.GetSection("RABBITMQ_HOST").Value,
-            Port = Convert.ToInt32(_env.GetSection("RABBITMQ_PORT").Value),
-            UserName = _env.GetSection("RABBITMQ_USER").Value,
-            Password = _env.GetSection("RABBITMQ_PASSWORD").Value
-        };
-        Console.WriteLine(factory.HostName + ":" + factory.Port);
-
-        using (var connection = factory.CreateConnection())
-        using (var channel = connection.CreateModel())
-        {
-            channel.QueueDeclare(queue: "order_processed",
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
-
-            string message = string.Empty;
-            message = JsonSerializer.Serialize(order);
-            var body = Encoding.UTF8.GetBytes(message);
-
-            channel.BasicPublish(exchange: "",
-                                 routingKey: "order_processed",
-                                 basicProperties: null,
-                                 body: body);
-            Console.WriteLine(" [x] Sent {0}", message);
+            db.SaveChanges();
         }
 
     }

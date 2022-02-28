@@ -9,7 +9,7 @@ using OrderApi.Models;
 
 namespace OrderApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
@@ -18,6 +18,7 @@ namespace OrderApi.Controllers
         public OrdersController(OrderContext context)
         {
             _context = context;
+            _context.Database.EnsureCreated();
         }
 
         // GET: api/Orders

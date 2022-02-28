@@ -5,6 +5,7 @@ namespace OrderApi.Models
 {
     public class Order
     {
+        
         public int OrderId { get; set; }
 
         public List<Product> Products { get; set; }
@@ -14,13 +15,12 @@ namespace OrderApi.Models
         public string OrderStatus { get; set; }
 
         public int CartId { get; set; }
-
-
     }
     public class Product
     {
         public string ProductId { get; set; }
         public double ProductPrice { get; set; }
+
     }
-    
+
 }

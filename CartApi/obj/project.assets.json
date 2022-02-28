@@ -7457,11 +7457,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/eyujiayi/Desktop/Advanced/Jia Yi/Assessment/Task-1/CartApi/CartApi.csproj",
+      "projectUniqueName": "/Users/eyujiayi/Desktop/Advanced/Jia Yi/Assessment/Task-5/CartApi/CartApi.csproj",
       "projectName": "CartApi",
-      "projectPath": "/Users/eyujiayi/Desktop/Advanced/Jia Yi/Assessment/Task-1/CartApi/CartApi.csproj",
+      "projectPath": "/Users/eyujiayi/Desktop/Advanced/Jia Yi/Assessment/Task-5/CartApi/CartApi.csproj",
       "packagesPath": "/Users/eyujiayi/.nuget/packages/",
-      "outputPath": "/Users/eyujiayi/Desktop/Advanced/Jia Yi/Assessment/Task-1/CartApi/obj/",
+      "outputPath": "/Users/eyujiayi/Desktop/Advanced/Jia Yi/Assessment/Task-5/CartApi/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/eyujiayi/.nuget/NuGet/NuGet.Config"

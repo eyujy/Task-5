@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CartApi.Models;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using CartApi.Models;
 using Microsoft.OpenApi.Models;
 
 namespace CartApi
@@ -30,12 +31,14 @@ namespace CartApi
 
             services.AddControllers();
 
+            services.AddHostedService<CartService>();
+
             services.AddDbContext<CartContext>(opt =>
                                                opt.UseInMemoryDatabase("CartList"));
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CartApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CartApi", Version = "v2" });
             });
         }
 

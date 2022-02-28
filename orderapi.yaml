@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: order
-        image: eyujy/orderapi:v4
+        image: eyujy/order-2:v6
         resources:
           limits:
             memory: "128Mi"

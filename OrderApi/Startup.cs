@@ -48,7 +48,7 @@ namespace OrderApi
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("../swagger/v1/swagger.json", "OrderApi v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("../swagger/v1/swagger.json", "OrderApi v2"));
 
 
             app.UseRouting();
